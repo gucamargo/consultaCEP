@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8">
+	<title>Consulta de CEP em API Publica - Gustavo Camargo</title>
+	<script>
+
+		//Limpa os campos do formulario caso o CEP esteja digitado errado
+		function zeraFormularioCep(){
+            document.getElementById('cep').value	= ("");
+		}
+
+		function mostraResultado(data){
+			//Exibir o resultado da busca em uma div abaixo do campo de CEP
+		  	document.getElementById('mostraResultado').innerHTML = JSON.stringify(data);
+		}
+
+		function consultaCep(cep){
+
+			//Expressão regular para validar o CEP digitado.
+            var validacep = /^[0-9]{8}$/;
+
+			if(validacep.test(cep)){
+
+				const URL = 'https://viacep.com.br/ws/'+ cep + '/json/';
+
+				fetch(URL)
+				  .then(response => response.json())
+				  .then(result => {
+				  	//Exibir o resultado da busca em uma div abaixo do campo de CEP
+				  	mostraResultado(result);
+
+				  	//Exibe o resultado da busca no console do navegador
+				    console.log(result);
+
+				  })
+				  .catch(err => {
+				  // trata se alguma das promises falhar
+				  console.error('Erro ao fazer a busca do CEP', err);
+				});
+
+			}else{
+
+				//CEP digitado é invalido e limpa o formulario
+                zeraFormularioCep();
+                alert("O CEP digitado é inválido.");
+
+			}
+
+		}
+		
+	</script>
+</head>
+<body>
+	<form>
+	  <div class="form-group">
+	    <label for="exampleInputEmail1">CEP</label>
+	    <input type="text" class="form-control" id="cep" name="cep" onblur="consultaCep(this.value);">
+	  </div>
+	  <div id="mostraResultado"></div>
+	</form>
+</body>
+</html>
